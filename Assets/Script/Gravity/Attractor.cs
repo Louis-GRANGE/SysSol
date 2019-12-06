@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Attractor : MonoBehaviour
 {
-    private const float G = 667.4f;
+    private const float G = 6.674f;
     
     [HideInInspector] public Rigidbody rb;
 
@@ -51,7 +51,7 @@ public class Attractor : MonoBehaviour
             _lineRenderer.positionCount = pos.Count;
             _lineRenderer.SetPositions(pos.ToArray());
         }
-//            Debug.DrawLine(pos[pos.Count - 1], point, lineColor, lineDuration);
+            Debug.DrawLine(pos[pos.Count - 2], point, Color.white, 3f);
         
         
     }
@@ -72,11 +72,13 @@ public class Attractor : MonoBehaviour
 
         Vector3 direction = rb.position - rbToAttract.position;
         float distance = direction.magnitude;
-        
-        if (distance == 0)
+
+        float scale = objToAttract.gameObject.transform.localScale.magnitude;
+
+        if (distance <= scale + gameObject.transform.localScale.magnitude + 0.2f)
             return;
 
-        float forceMagnitude = 1 * (rb.mass * rbToAttract.mass) / Mathf.Pow(distance, 2);
+        float forceMagnitude = G * (rb.mass * rbToAttract.mass) / Mathf.Pow(distance, 2);
         Vector3 force = direction.normalized * forceMagnitude;
         
         rbToAttract.AddForce(force);
