@@ -15,7 +15,7 @@ public class MGR_SolarSystem : MonoBehaviour
         private set { _sun = value; }
     }
 
-    public List<APlanet> Planets;
+    public List<Planet> Planets;
 
     private int _size;
 
@@ -32,7 +32,7 @@ public class MGR_SolarSystem : MonoBehaviour
         else
             throw new Exception("[" + GetType().Name + "] Trying to instanciate a second instance");
 
-        Planets = new List<APlanet>();
+        Planets = new List<Planet>();
     }
 
     private void Start()
@@ -41,7 +41,7 @@ public class MGR_SolarSystem : MonoBehaviour
 
         foreach (var planet in Planets)
         {
-            planet.SetGravityCenter(_sun);
+//            planet.SetGravityCenter(_sun);
         }
     }
 }
