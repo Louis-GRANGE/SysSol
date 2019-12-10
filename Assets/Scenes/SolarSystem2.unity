@@ -295,6 +295,7 @@ GameObject:
   - component: {fileID: 805978138}
   - component: {fileID: 805978137}
   - component: {fileID: 805978136}
+  - component: {fileID: 805978140}
   m_Layer: 0
   m_Name: Planet
   m_TagString: Untagged
@@ -316,7 +317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
   drawLine: 1
-  impulsion: 1
+  impulsion: 100
   isOrbit: 1
   isOrbitCirculaire: 0
   orbitReference: {fileID: 1437133124}
@@ -328,7 +329,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 805978135}
   serializedVersion: 2
-  m_Mass: 100
+  m_Mass: 500
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
@@ -370,7 +371,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 805978135}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 466, y: 0.553574, z: 1.5900857}
+  m_LocalPosition: {x: 253, y: 0.553574, z: 27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1753316814}
@@ -382,6 +383,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &805978140
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805978135}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!43 &822772674
 Mesh:
   m_ObjectHideFlags: 0
@@ -1387,7 +1401,7 @@ Light:
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
-  m_Range: 10
+  m_Range: 415.28687
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -1503,7 +1517,7 @@ Transform:
   m_GameObject: {fileID: 1437133118}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 12.189, y: 12.189, z: 12.189}
+  m_LocalScale: {x: 108.669, y: 108.669, z: 108.669}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -1521,8 +1535,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
-  drawLine: 1
-  impulsion: 100
+  drawLine: 0
+  impulsion: 0
   isOrbit: 0
   isOrbitCirculaire: 0
   orbitReference: {fileID: 0}
@@ -1534,7 +1548,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1437133118}
   serializedVersion: 2
-  m_Mass: 1000000
+  m_Mass: 100000
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
@@ -1628,7 +1642,7 @@ Transform:
   m_GameObject: {fileID: 1462613071}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3.6223, y: 3.6223, z: 3.6223}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1

@@ -61,8 +61,7 @@ public class Attractor : MonoBehaviour
                 rb.mass = GetGravityMass(orbitReference.rb.mass,
                     (rb.position - orbitReference.rb.position).magnitude);
             
-                rb.AddForce(Vector3.forward * impulsion, ForceMode.Impulse);
-                rb.velocity = Vector3.zero;
+                rb.AddForce(Vector3.forward * impulsion);
 //                rb.AddForce(Vector3.forward * distance);
             }
         }
@@ -132,9 +131,6 @@ public class Attractor : MonoBehaviour
 
         Vector3 force = direction.normalized * forceMagnitude;
         
-        
-        rbToAttract.AddForce(Vector3.zero, ForceMode.VelocityChange);
-        rbToAttract.AddForce(Vector3.zero, ForceMode.Impulse);
         rbToAttract.AddForce(force);
     }
 
