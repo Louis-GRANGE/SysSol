@@ -34,8 +34,10 @@ public class Planet : MonoBehaviour
     private ColourGenerator colourGenerator = new ColourGenerator();
     
     [SerializeField, HideInInspector]
-    private MeshFilter[] meshFilters;
+    private MeshFilter[] terrainFilters;
     private TerrainFace[] terrainFaces;
+    private MeshFilter[] atmosphereFilters;
+    private TerrainFace[] atmosphereFaces;
 
     private void OnValidate()
     {
@@ -47,39 +49,61 @@ public class Planet : MonoBehaviour
         shapeGenerator.UpdateSettings(shapeSettings);
         colourGenerator.UpdateSettings(colourSettings);
         
-        if (meshFilters == null || meshFilters.Length == 0)
+        if (terrainFilters == null || terrainFilters.Length == 0)
         {
-            meshFilters = new MeshFilter[6];
+            terrainFilters = new MeshFilter[6];
         }
         terrainFaces = new TerrainFace[6];
+        
+        if (atmosphereFilters == null || atmosphereFilters.Length == 0)
+        {
+            atmosphereFilters = new MeshFilter[6];
+        }
+        atmosphereFaces = new TerrainFace[6];
+
 
         Vector3[] directions = {Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back,};
 
         for (int i = 0; i < 6; i++)
         {
-            if (meshFilters[i] == null)
+            if (terrainFilters[i] == null)
             {
-                GameObject meshObj = new GameObject("mesh");
-                meshObj.transform.parent = transform;
-                meshObj.transform.localPosition = Vector3.zero;
+                GameObject meshTerrain = new GameObject("Terrain");
+                meshTerrain.transform.parent = transform;
 
-                meshObj.AddComponent<MeshRenderer>();
-                meshFilters[i] = meshObj.AddComponent<MeshFilter>();
-                meshFilters[i].sharedMesh = new Mesh();
+                meshTerrain.AddComponent<MeshRenderer>();
+                terrainFilters[i] = meshTerrain.AddComponent<MeshFilter>();
+                terrainFilters[i].sharedMesh = new Mesh();
             }
-            meshFilters[i].GetComponent<MeshRenderer>().sharedMaterial = colourSettings.planetMaterial;
+            terrainFilters[i].GetComponent<MeshRenderer>().sharedMaterial = colourSettings.planetMaterial;
 
-            terrainFaces[i] = new TerrainFace(shapeGenerator, meshFilters[i].sharedMesh, resolution, directions[i]);
+            terrainFaces[i] = new TerrainFace(shapeGenerator, terrainFilters[i].sharedMesh, resolution, directions[i]);
             bool renderFace = faceRenderMask == FaceRenderMask.All || (int) faceRenderMask - 1 == i;
-            meshFilters[i].gameObject.SetActive(renderFace);
+            terrainFilters[i].gameObject.SetActive(renderFace);
+            
+            if (atmosphereFilters[i] == null)
+            {
+                GameObject meshAtmosphere = new GameObject("Atmosphere");
+                meshAtmosphere.transform.parent = transform;
+
+                meshAtmosphere.AddComponent<MeshRenderer>();
+                atmosphereFilters[i] = meshAtmosphere.AddComponent<MeshFilter>();
+                atmosphereFilters[i].sharedMesh = new Mesh();
+            }
+            atmosphereFilters[i].GetComponent<MeshRenderer>().sharedMaterial = colourSettings.atmosphereMaterial;
+
+            atmosphereFaces[i] = new TerrainFace(shapeGenerator, atmosphereFilters[i].sharedMesh, resolution, directions[i]);
+            atmosphereFilters[i].gameObject.SetActive(true);
         }
     }
 
     public void GeneratePlanet()
     {
         Initialize();
-        GenerateMesh();
+        GenerateTerrain();
+        GenerateAtmosphere();
         GenerateColours();
+        FusionTerrainMeshes();
     }
 
     public void OnShapeSettingsUpdated()
@@ -87,7 +111,8 @@ public class Planet : MonoBehaviour
         if (autoUpdate)
         {
             Initialize();
-            GenerateMesh();
+            GenerateTerrain();
+            GenerateAtmosphere();
         }
     }
 
@@ -100,27 +125,57 @@ public class Planet : MonoBehaviour
         }
     }
 
-    public void GenerateMesh()
+    public void GenerateTerrain()
     {
         for (int i = 0; i < 6; i++)
         {
-            if (meshFilters[i].gameObject.activeSelf)
+            if (terrainFilters[i].gameObject.activeSelf)
             {
-                terrainFaces[i].ConstructMesh();
+                terrainFaces[i].ConstructTerrain();
             }
         }
-        colourGenerator.UpdateElevation(shapeGenerator.elevationMinMax) ;
+        colourGenerator.UpdateElevation(shapeGenerator.elevationTerrainMinMax) ;
     }
-
+    
+    public void GenerateAtmosphere()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (atmosphereFilters[i].gameObject.activeSelf)
+            {
+                atmosphereFaces[i].ConstructAtmosphere();
+            }
+        }
+    }
+    
     public void GenerateColours()
     {
         colourGenerator.UpdateColours();
         for (int i = 0; i < 6; i++)
         {
-            if (meshFilters[i].gameObject.activeSelf)
+            if (terrainFilters[i].gameObject.activeSelf)
             {
                 terrainFaces[i].UpdateUVs(colourGenerator);
             }
         }
+    }
+
+    public void FusionTerrainMeshes()
+    {
+        MeshFilter[] meshFilters = terrainFilters;
+        GameObject TerrainMesh = new GameObject("TerrainMesh");
+        TerrainMesh.transform.parent = transform;
+        TerrainMesh.AddComponent<MeshFilter>();
+        TerrainMesh.AddComponent<MeshRenderer>();
+        TerrainMesh.GetComponent<MeshRenderer>().material = colourSettings.planetMaterial;
+
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        for (int i = 0; i < meshFilters.Length; i++)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+        }
+        TerrainMesh.transform.GetComponent<MeshFilter>().mesh = new Mesh();
+        TerrainMesh.transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
     }
 }

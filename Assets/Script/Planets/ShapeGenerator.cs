@@ -6,7 +6,8 @@ public class ShapeGenerator
 {
     private ShapeSettings settings;
     private INoiseFilter[] noiseFilters;
-    public MinMax elevationMinMax;
+    public MinMax elevationTerrainMinMax;
+    public MinMax elevationAtmosphereMinMax;
 
     public void UpdateSettings(ShapeSettings settings)
     {
@@ -16,10 +17,10 @@ public class ShapeGenerator
         {
             noiseFilters[i] = NoiseFilterFactory.CreateNoiseFilter(settings.noiseLayers[i].noiseSettings);
         }
-        elevationMinMax = new MinMax();
+        elevationTerrainMinMax = new MinMax();
     }
 
-    public Vector3 CalculatePointOnPlanet(Vector3 pointOnUnitSphere)
+    public float CalculateUnscaledTerrainElevation(Vector3 pointOnUnitSphere)
     {
         float firstLayerValue = 0;
         float elevation = 0;
@@ -41,8 +42,49 @@ public class ShapeGenerator
                 elevation += noiseFilters[i].Evaluate(pointOnUnitSphere) * mask;
             }
         }
-        elevation = settings.planetRadius * (1 + elevation);
-        elevationMinMax.AddValue(elevation);
-        return pointOnUnitSphere * elevation;
+        elevationTerrainMinMax.AddValue(elevation);
+        return  elevation;
     }
+    
+    public float CalculateUnscaledAtmosphereElevation(Vector3 pointOnUnitSphere)
+    {
+        float firstLayerValue = 0;
+        float elevation = 0;
+
+        if (noiseFilters.Length > 0)
+        {
+            firstLayerValue = noiseFilters[0].Evaluate(pointOnUnitSphere);
+            if (settings.noiseLayers[0].enabled)
+            {
+                elevation = firstLayerValue;
+            }
+        }
+        
+        for (int i = 1; i < noiseFilters.Length; i++)
+        {
+            if (settings.noiseLayers[i].enabled)
+            {
+                float mask = (settings.noiseLayers[i].useFirstLayerAsMask) ? firstLayerValue : 1;
+                elevation += (noiseFilters[i].Evaluate(pointOnUnitSphere) * mask) * 0.3f;
+            }
+        }
+        elevationTerrainMinMax.AddValue(elevation);
+        return  elevation;
+    }
+
+
+    public float GetScaledTerrainElevation(float unscaleElevation)
+    {
+        float elevation = Mathf.Max(0, unscaleElevation);
+        elevation = settings.planetRadius * (1 + elevation);
+        return elevation;
+    }
+    
+    public float GetScaledAtmosphereElevation(float unscaleElevation)
+    {
+        float elevation = Mathf.Max(0, unscaleElevation);
+        elevation = settings.planetRadius * (1 + elevation) + settings.planetRadius * 0.1f;
+        return elevation;
+    }
+
 }

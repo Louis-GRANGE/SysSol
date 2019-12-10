@@ -7,7 +7,9 @@ using UnityEngine;
 public class ColourSettings : ScriptableObject
 {
     public Material planetMaterial;
+    public Material atmosphereMaterial;
     public BiomeColourSettings biomeColourSettings;
+    public Gradient oceanColour;
     
     [System.Serializable]
     public class BiomeColourSettings
