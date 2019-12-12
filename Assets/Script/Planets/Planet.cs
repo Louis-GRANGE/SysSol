@@ -70,6 +70,7 @@ public class Planet : MonoBehaviour
             {
                 GameObject meshTerrain = new GameObject("Terrain");
                 meshTerrain.transform.parent = transform;
+                meshTerrain.transform.localPosition = Vector3.zero;
 
                 meshTerrain.AddComponent<MeshRenderer>();
                 terrainFilters[i] = meshTerrain.AddComponent<MeshFilter>();
@@ -103,7 +104,7 @@ public class Planet : MonoBehaviour
         GenerateTerrain();
         GenerateAtmosphere();
         GenerateColours();
-        FusionTerrainMeshes();
+        //FusionTerrainMeshes();
     }
 
     public void OnShapeSettingsUpdated()

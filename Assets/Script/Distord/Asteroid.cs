@@ -58,8 +58,9 @@ public class Asteroid : MonoBehaviour
     private void OnCollisionEnter(Collision col)
     {
         Collider collision = col.collider;
-//        print("collision.name: " + collision.name);    
-        Debug.Log("Collision");
+        
+        Debug.Log("[" + GetType().Name + "] Collision avec " + col.gameObject.name);
+        
         Ray ray;
         if (collision.transform.parent != null)
         {
@@ -76,9 +77,10 @@ public class Asteroid : MonoBehaviour
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("L_Distortable")))
         {
             Debug.DrawRay(hit.transform.position, transform.position, Color.red, 10);
-//            Debug.Log("vitesse " + _rigidbody.velocity * _rigidbody.mass);
-            Vector3 impactStrength = _rigidbody.velocity * _rigidbody.mass; // TODO: problème de rapport de taille
-            hit.collider.GetComponent<PlaneteModif>().CrashAsteroid(hit.triangleIndex, impactStrength, transform.localScale.x);
+            
+            Vector3 impactStrength = _rigidbody.velocity * _rigidbody.mass;
+            
+            hit.collider.GetComponent<PlanetDistord>().CrashAsteroid(hit.triangleIndex, impactStrength, transform.localScale.x);
         }
         
         Destroy(gameObject);
