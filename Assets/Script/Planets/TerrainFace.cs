@@ -7,7 +7,7 @@ public class TerrainFace
 {
     private ShapeGenerator shapeGenerator;
     private Mesh mesh;
-    private int resolution;
+    protected int resolution;
     private Vector3 localUp;
     private Vector3 axisA;
     private Vector3 axisB;
@@ -25,6 +25,7 @@ public class TerrainFace
 
     public void ConstructTerrain()
     {
+        Debug.Log("Yeah");
         Vector3[] vertices = new Vector3[resolution * resolution];
         int[] triangles = new int[(resolution - 1) * (resolution - 1) * 6];
         int triIndex = 0;

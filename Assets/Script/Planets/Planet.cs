@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Planet : MonoBehaviour
@@ -36,19 +37,37 @@ public class Planet : MonoBehaviour
     [SerializeField, HideInInspector]
     private MeshFilter[] terrainFilters;
     private TerrainFace[] terrainFaces;
+    [SerializeField, HideInInspector]
     private MeshFilter[] atmosphereFilters;
     private TerrainFace[] atmosphereFaces;
+
+    [SerializeField, HideInInspector]
+    private GameObject terrainMesh;
+    private GameObject atmosphereMesh;
+
+    private GameObject terrainMeshes;
+    private GameObject atmosphereMeshes;
 
     private void OnValidate()
     {
         GeneratePlanet();
     }
-
+    
     public void Initialize()
     {
         shapeGenerator.UpdateSettings(shapeSettings);
         colourGenerator.UpdateSettings(colourSettings);
         
+        if (terrainMeshes == null)
+            terrainMeshes = new GameObject("TerrainFaces");
+        terrainMeshes.transform.parent = transform;
+        terrainMeshes.transform.localPosition = Vector3.zero;
+        
+        if (atmosphereMeshes == null)
+            atmosphereMeshes = new GameObject("AtmosphereFaces");
+        atmosphereMeshes.transform.parent = transform;
+        atmosphereMeshes.transform.localPosition = Vector3.zero;
+
         if (terrainFilters == null || terrainFilters.Length == 0)
         {
             terrainFilters = new MeshFilter[6];
@@ -60,8 +79,7 @@ public class Planet : MonoBehaviour
             atmosphereFilters = new MeshFilter[6];
         }
         atmosphereFaces = new TerrainFace[6];
-
-
+        
         Vector3[] directions = {Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back,};
 
         for (int i = 0; i < 6; i++)
@@ -69,7 +87,7 @@ public class Planet : MonoBehaviour
             if (terrainFilters[i] == null)
             {
                 GameObject meshTerrain = new GameObject("Terrain");
-                meshTerrain.transform.parent = transform;
+                meshTerrain.transform.parent = terrainMeshes.transform;
                 meshTerrain.transform.localPosition = Vector3.zero;
 
                 meshTerrain.AddComponent<MeshRenderer>();
@@ -85,7 +103,7 @@ public class Planet : MonoBehaviour
             if (atmosphereFilters[i] == null)
             {
                 GameObject meshAtmosphere = new GameObject("Atmosphere");
-                meshAtmosphere.transform.parent = transform;
+                meshAtmosphere.transform.parent = atmosphereMeshes.transform;
 
                 meshAtmosphere.AddComponent<MeshRenderer>();
                 atmosphereFilters[i] = meshAtmosphere.AddComponent<MeshFilter>();
@@ -104,7 +122,8 @@ public class Planet : MonoBehaviour
         GenerateTerrain();
         GenerateAtmosphere();
         GenerateColours();
-        //FusionTerrainMeshes();
+        FusionTerrainMeshes();
+        FusionAtmosphereMeshes();
     }
 
     public void OnShapeSettingsUpdated()
@@ -135,7 +154,7 @@ public class Planet : MonoBehaviour
                 terrainFaces[i].ConstructTerrain();
             }
         }
-        colourGenerator.UpdateElevation(shapeGenerator.elevationTerrainMinMax) ;
+        colourGenerator.UpdateElevation(shapeGenerator.elevationMinMax) ;
     }
     
     public void GenerateAtmosphere()
@@ -146,7 +165,7 @@ public class Planet : MonoBehaviour
             {
                 atmosphereFaces[i].ConstructAtmosphere();
             }
-        }
+        } 
     }
     
     public void GenerateColours()
@@ -164,19 +183,54 @@ public class Planet : MonoBehaviour
     public void FusionTerrainMeshes()
     {
         MeshFilter[] meshFilters = terrainFilters;
-        GameObject TerrainMesh = new GameObject("TerrainMesh");
-        TerrainMesh.transform.parent = transform;
-        TerrainMesh.AddComponent<MeshFilter>();
-        TerrainMesh.AddComponent<MeshRenderer>();
-        TerrainMesh.GetComponent<MeshRenderer>().material = colourSettings.planetMaterial;
+
+        if(terrainMesh == null)
+        {
+            terrainMesh = new GameObject("TerrainMesh");
+        }
+        terrainMesh.transform.parent = transform;
+        terrainMesh.AddComponent<MeshFilter>();
+        terrainMesh.AddComponent<MeshRenderer>();
+        terrainMesh.GetComponent<MeshRenderer>().material = colourSettings.planetMaterial;
 
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
 
         for (int i = 0; i < meshFilters.Length; i++)
         {
             combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            meshFilters[i].gameObject.SetActive(false);
         }
-        TerrainMesh.transform.GetComponent<MeshFilter>().mesh = new Mesh();
-        TerrainMesh.transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+
+        terrainMesh.GetComponent<MeshFilter>().mesh = new Mesh();
+        terrainMesh.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        terrainMesh.gameObject.SetActive(true);
+    }
+
+    public void FusionAtmosphereMeshes()
+    {
+        MeshFilter[] meshFilters = atmosphereFilters;
+
+        if (atmosphereMesh == null)
+        {
+            atmosphereMesh = new GameObject("AtmosphereMesh");
+        }
+        atmosphereMesh.transform.parent = transform;
+        atmosphereMesh.AddComponent<MeshFilter>();
+        atmosphereMesh.AddComponent<MeshRenderer>();
+        atmosphereMesh.GetComponent<MeshRenderer>().material = colourSettings.atmosphereMaterial;
+
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        for (int i = 0; i < meshFilters.Length; i++)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            meshFilters[i].gameObject.SetActive(false);
+        }
+
+        atmosphereMesh.GetComponent<MeshFilter>().mesh = new Mesh();
+        atmosphereMesh.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        atmosphereMesh.gameObject.SetActive(true);
     }
 }
