@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Planet : MonoBehaviour
@@ -36,19 +37,36 @@ public class Planet : MonoBehaviour
     [SerializeField, HideInInspector]
     private MeshFilter[] terrainFilters;
     private TerrainFace[] terrainFaces;
+    [SerializeField, HideInInspector]
     private MeshFilter[] atmosphereFilters;
     private TerrainFace[] atmosphereFaces;
+
+    [SerializeField, HideInInspector]
+    private GameObject terrainMesh;
+
+    private GameObject terrainMeshes;
+    private GameObject atmosphereMeshes;
 
     private void OnValidate()
     {
         GeneratePlanet();
     }
-
+    
     public void Initialize()
     {
         shapeGenerator.UpdateSettings(shapeSettings);
         colourGenerator.UpdateSettings(colourSettings);
         
+        if (terrainMeshes == null)
+            terrainMeshes = new GameObject("TerrainFaces");
+        terrainMeshes.transform.parent = transform;
+        terrainMeshes.transform.localPosition = Vector3.zero;
+        
+        if (atmosphereMeshes == null)
+            atmosphereMeshes = new GameObject("AtmosphereFaces");
+        atmosphereMeshes.transform.parent = transform;
+        atmosphereMeshes.transform.localPosition = Vector3.zero;
+
         if (terrainFilters == null || terrainFilters.Length == 0)
         {
             terrainFilters = new MeshFilter[6];
@@ -60,8 +78,7 @@ public class Planet : MonoBehaviour
             atmosphereFilters = new MeshFilter[6];
         }
         atmosphereFaces = new TerrainFace[6];
-
-
+        
         Vector3[] directions = {Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back,};
 
         for (int i = 0; i < 6; i++)
@@ -69,7 +86,8 @@ public class Planet : MonoBehaviour
             if (terrainFilters[i] == null)
             {
                 GameObject meshTerrain = new GameObject("Terrain");
-                meshTerrain.transform.parent = transform;
+                meshTerrain.transform.parent = terrainMeshes.transform;
+                meshTerrain.transform.localPosition = Vector3.zero;
 
                 meshTerrain.AddComponent<MeshRenderer>();
                 terrainFilters[i] = meshTerrain.AddComponent<MeshFilter>();
@@ -84,7 +102,7 @@ public class Planet : MonoBehaviour
             if (atmosphereFilters[i] == null)
             {
                 GameObject meshAtmosphere = new GameObject("Atmosphere");
-                meshAtmosphere.transform.parent = transform;
+                meshAtmosphere.transform.parent = atmosphereMeshes.transform;
 
                 meshAtmosphere.AddComponent<MeshRenderer>();
                 atmosphereFilters[i] = meshAtmosphere.AddComponent<MeshFilter>();
@@ -103,7 +121,7 @@ public class Planet : MonoBehaviour
         GenerateTerrain();
         GenerateAtmosphere();
         GenerateColours();
-        FusionTerrainMeshes();
+        //FusionTerrainMeshes();
     }
 
     public void OnShapeSettingsUpdated()
@@ -134,7 +152,7 @@ public class Planet : MonoBehaviour
                 terrainFaces[i].ConstructTerrain();
             }
         }
-        colourGenerator.UpdateElevation(shapeGenerator.elevationTerrainMinMax) ;
+        colourGenerator.UpdateElevation(shapeGenerator.elevationMinMax) ;
     }
     
     public void GenerateAtmosphere()
@@ -145,7 +163,7 @@ public class Planet : MonoBehaviour
             {
                 atmosphereFaces[i].ConstructAtmosphere();
             }
-        }
+        } 
     }
     
     public void GenerateColours()
@@ -160,22 +178,70 @@ public class Planet : MonoBehaviour
         }
     }
 
-    public void FusionTerrainMeshes()
+    private void FusionTerrainMeshes()
     {
-        MeshFilter[] meshFilters = terrainFilters;
-        GameObject TerrainMesh = new GameObject("TerrainMesh");
-        TerrainMesh.transform.parent = transform;
-        TerrainMesh.AddComponent<MeshFilter>();
-        TerrainMesh.AddComponent<MeshRenderer>();
-        TerrainMesh.GetComponent<MeshRenderer>().material = colourSettings.planetMaterial;
+        Debug.Log("fusion ah!");
+        if (terrainMesh == null)
+            terrainMesh = new GameObject("TerrainMesh");
+        terrainMesh.transform.parent = transform;
+        terrainMesh.transform.localPosition = Vector3.zero;
 
-        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+        //terrainMesh.AddComponent<MeshFilter>();
+        //terrainMesh.AddComponent<MeshRenderer>();
 
-        for (int i = 0; i < meshFilters.Length; i++)
+        /*List<Mesh> meshes = new List<Mesh>();
+        
+        foreach (var meshFilter in terrainFilters)
         {
-            combine[i].mesh = meshFilters[i].sharedMesh;
+            meshes.Add(meshFilter.sharedMesh);
+            Debug.Log(meshes.Last());
         }
-        TerrainMesh.transform.GetComponent<MeshFilter>().mesh = new Mesh();
-        TerrainMesh.transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        
+        terrainMesh.GetComponent<MeshFilter>().sharedMesh = CombineMeshes(meshes);*/
+
+        Mesh mesh = new Mesh();
+        Vector3[] vertices = new Vector3[resolution * resolution * 6];
+        Debug.Log(resolution * resolution * 6);
+        int[] triangles = new int[((resolution - 1) * (resolution - 1) * 6) * 6];
+
+        int triIndex = 0;
+        for (int i = 0; i < 6; i++)
+        {
+            for (int j = 0; j < resolution; j++)
+            {
+                 vertices[j] = terrainFilters[i].mesh.vertices[i + j];
+            }
+        }
+
+        for (int i = 0; i < 6; i++)
+        {
+            for (int j = 0; j < (resolution - 1) * (resolution - 1) * 6; j++)
+            {
+                triangles[i * resolution + j] = terrainFilters[i].mesh.triangles[j];
+            }
+        }
+        
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+
+        terrainMesh.AddComponent<MeshFilter>().mesh = mesh;
+        terrainMesh.AddComponent<MeshRenderer>();
+        
+        terrainMesh.GetComponent<MeshRenderer>().material = colourSettings.planetMaterial;
+        Debug.Log("Fin");
+    }
+    
+    private Mesh CombineMeshes(List<Mesh> meshes)
+    {
+        CombineInstance[] combine = new CombineInstance[meshes.Count];
+        for (int i = 0; i < meshes.Count; i++)
+        {
+            combine[i].mesh = meshes[i];
+            combine[i].transform = transform.localToWorldMatrix;
+        }
+
+        var mesh = new Mesh();
+        mesh.CombineMeshes(combine);
+        return mesh;
     }
 }

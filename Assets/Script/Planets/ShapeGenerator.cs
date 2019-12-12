@@ -6,8 +6,7 @@ public class ShapeGenerator
 {
     private ShapeSettings settings;
     private INoiseFilter[] noiseFilters;
-    public MinMax elevationTerrainMinMax;
-    public MinMax elevationAtmosphereMinMax;
+    public MinMax elevationMinMax;
 
     public void UpdateSettings(ShapeSettings settings)
     {
@@ -17,7 +16,7 @@ public class ShapeGenerator
         {
             noiseFilters[i] = NoiseFilterFactory.CreateNoiseFilter(settings.noiseLayers[i].noiseSettings);
         }
-        elevationTerrainMinMax = new MinMax();
+        elevationMinMax = new MinMax();
     }
 
     public float CalculateUnscaledTerrainElevation(Vector3 pointOnUnitSphere)
@@ -42,7 +41,7 @@ public class ShapeGenerator
                 elevation += noiseFilters[i].Evaluate(pointOnUnitSphere) * mask;
             }
         }
-        elevationTerrainMinMax.AddValue(elevation);
+        elevationMinMax.AddValue(elevation);
         return  elevation;
     }
     
@@ -68,7 +67,7 @@ public class ShapeGenerator
                 elevation += (noiseFilters[i].Evaluate(pointOnUnitSphere) * mask) * 0.3f;
             }
         }
-        elevationTerrainMinMax.AddValue(elevation);
+        elevationMinMax.AddValue(elevation);
         return  elevation;
     }
 
