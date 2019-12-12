@@ -121,7 +121,8 @@ public class Planet : MonoBehaviour
         GenerateTerrain();
         GenerateAtmosphere();
         GenerateColours();
-        //FusionTerrainMeshes();
+        FusionTerrainMeshes();
+        FusionAtmosphereMeshes();
     }
 
     public void OnShapeSettingsUpdated()
@@ -178,70 +179,51 @@ public class Planet : MonoBehaviour
         }
     }
 
-    private void FusionTerrainMeshes()
+    public void FusionTerrainMeshes()
     {
-        Debug.Log("fusion ah!");
-        if (terrainMesh == null)
-            terrainMesh = new GameObject("TerrainMesh");
-        terrainMesh.transform.parent = transform;
-        terrainMesh.transform.localPosition = Vector3.zero;
+        MeshFilter[] meshFilters = terrainFilters;
 
-        //terrainMesh.AddComponent<MeshFilter>();
-        //terrainMesh.AddComponent<MeshRenderer>();
+        GameObject TerrainMesh = new GameObject("TerrainMesh");
+        TerrainMesh.transform.parent = transform;
+        TerrainMesh.AddComponent<MeshFilter>();
+        TerrainMesh.AddComponent<MeshRenderer>();
+        TerrainMesh.GetComponent<MeshRenderer>().material = colourSettings.planetMaterial;
 
-        /*List<Mesh> meshes = new List<Mesh>();
-        
-        foreach (var meshFilter in terrainFilters)
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        for (int i = 0; i < meshFilters.Length; i++)
         {
-            meshes.Add(meshFilter.sharedMesh);
-            Debug.Log(meshes.Last());
-        }
-        
-        terrainMesh.GetComponent<MeshFilter>().sharedMesh = CombineMeshes(meshes);*/
-
-        Mesh mesh = new Mesh();
-        Vector3[] vertices = new Vector3[resolution * resolution * 6];
-        Debug.Log(resolution * resolution * 6);
-        int[] triangles = new int[((resolution - 1) * (resolution - 1) * 6) * 6];
-
-        int triIndex = 0;
-        for (int i = 0; i < 6; i++)
-        {
-            for (int j = 0; j < resolution; j++)
-            {
-                 vertices[j] = terrainFilters[i].mesh.vertices[i + j];
-            }
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            meshFilters[i].gameObject.SetActive(false);
         }
 
-        for (int i = 0; i < 6; i++)
-        {
-            for (int j = 0; j < (resolution - 1) * (resolution - 1) * 6; j++)
-            {
-                triangles[i * resolution + j] = terrainFilters[i].mesh.triangles[j];
-            }
-        }
-        
-        mesh.vertices = vertices;
-        mesh.triangles = triangles;
-
-        terrainMesh.AddComponent<MeshFilter>().mesh = mesh;
-        terrainMesh.AddComponent<MeshRenderer>();
-        
-        terrainMesh.GetComponent<MeshRenderer>().material = colourSettings.planetMaterial;
-        Debug.Log("Fin");
+        TerrainMesh.GetComponent<MeshFilter>().mesh = new Mesh();
+        TerrainMesh.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        TerrainMesh.gameObject.SetActive(true);
     }
-    
-    private Mesh CombineMeshes(List<Mesh> meshes)
+
+    public void FusionAtmosphereMeshes()
     {
-        CombineInstance[] combine = new CombineInstance[meshes.Count];
-        for (int i = 0; i < meshes.Count; i++)
+        MeshFilter[] meshFilters = atmosphereFilters;
+
+        GameObject AtmosphereMesh = new GameObject("AtmosphereMesh");
+        AtmosphereMesh.transform.parent = transform;
+        AtmosphereMesh.AddComponent<MeshFilter>();
+        AtmosphereMesh.AddComponent<MeshRenderer>();
+        AtmosphereMesh.GetComponent<MeshRenderer>().material = colourSettings.atmosphereMaterial;
+
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        for (int i = 0; i < meshFilters.Length; i++)
         {
-            combine[i].mesh = meshes[i];
-            combine[i].transform = transform.localToWorldMatrix;
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            meshFilters[i].gameObject.SetActive(false);
         }
 
-        var mesh = new Mesh();
-        mesh.CombineMeshes(combine);
-        return mesh;
+        AtmosphereMesh.GetComponent<MeshFilter>().mesh = new Mesh();
+        AtmosphereMesh.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
+        AtmosphereMesh.gameObject.SetActive(true);
     }
 }
