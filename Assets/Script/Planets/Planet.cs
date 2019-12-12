@@ -88,7 +88,7 @@ public class Planet : MonoBehaviour
             {
                 GameObject meshTerrain = new GameObject("Terrain");
                 meshTerrain.transform.parent = terrainMeshes.transform;
-                meshTerrain.transform.localPosition = Vector3.zero;
+                meshTerrain.transform.position = terrainMeshes.transform.position;
 
                 meshTerrain.AddComponent<MeshRenderer>();
                 terrainFilters[i] = meshTerrain.AddComponent<MeshFilter>();
@@ -104,6 +104,7 @@ public class Planet : MonoBehaviour
             {
                 GameObject meshAtmosphere = new GameObject("Atmosphere");
                 meshAtmosphere.transform.parent = atmosphereMeshes.transform;
+                meshAtmosphere.transform.position = atmosphereMeshes.transform.position;
 
                 meshAtmosphere.AddComponent<MeshRenderer>();
                 atmosphereFilters[i] = meshAtmosphere.AddComponent<MeshFilter>();
