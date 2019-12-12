@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Vertex
@@ -8,36 +9,75 @@ public class Vertex
     public List<int> TrianglesIndex;
     public Dictionary<Vertex, float> NearbyVertices;
 
-    private readonly PlanetDistord planetDistord;
+    private readonly PlanetDistord _planetDistord;
     
     public Vertex(PlanetDistord planetDistord, int posIndex)
     {
-        this.planetDistord = planetDistord;
+        this._planetDistord = planetDistord;
         PosIndex = posIndex;
         NearbyVertices = new Dictionary<Vertex, float>();
         TrianglesIndex = new List<int>();
     }
 
-    public void MoveByVertice(Vertex reference, Vector3 impactStrength, float radius)
+    private void Move(Vector3 impactStrength, float radius, float cumulativeDistance)
     {
-        planetDistord.Vertices[PosIndex] += (new Vector3(
+        _planetDistord.Vertices[PosIndex] += (new Vector3(
                                                  0,
-                                                 planetDistord.Normals[PosIndex].y * impactStrength.y,
-                                                 0) * (1 + (NearbyVertices[reference] / radius)));
+                                                 _planetDistord.Normals[PosIndex].y * impactStrength.y,
+                                                 0) * (1 + (cumulativeDistance / radius)));
     }
 
+    private Dictionary<Vertex, float> _verticesToCompute;
     public void MoveWithNeighbor(Vector3 impactStrength, float radius)
     {
-        planetDistord.Vertices[PosIndex] += new Vector3(
-            0,
-            planetDistord.Normals[PosIndex].y * impactStrength.y,
-            0
-        );
+        _verticesToCompute = new Dictionary<Vertex, float>();
 
-        foreach (var neighborVertice in NearbyVertices.Keys)
-        {
-            neighborVertice.MoveByVertice(this, impactStrength, radius);
-            
-        }
+        Debug.Log("[" + GetType().Name + "] Début de la recharge, rayon: " + radius);
+
+        _planetDistord.StartCoroutine(MoveCompute(impactStrength, radius));
+
+        Debug.Log("[" + GetType().Name + "] Terminé: N de vertices à traiter: " + _verticesToCompute.Count);
     }
+
+
+    private IEnumerator MoveCompute(Vector3 impactStrength, float radius)
+    {
+        // Ajout des vertices voisins aux vertices à traiter
+        foreach (Vertex nearbyVertex in NearbyVertices.Keys)
+            _verticesToCompute.Add(nearbyVertex, NearbyVertices[nearbyVertex]);
+
+        int i, nVerticesToCompute;
+        Vertex vertex;
+        float cumulativeDistance;
+        while (true)
+        {
+            nVerticesToCompute = _verticesToCompute.Count; ;
+            for (i = 0; i < nVerticesToCompute; ++i)
+            {
+                vertex = _verticesToCompute.Keys.ElementAt(i);
+                foreach (Vertex it in vertex.NearbyVertices.Keys)
+                {
+                    cumulativeDistance = _verticesToCompute[vertex] + vertex.NearbyVertices[it];
+                    if (!_verticesToCompute.ContainsKey(it) && (cumulativeDistance < radius))
+                        _verticesToCompute.Add(it, cumulativeDistance);
+                }
+                
+                if (i % 1000 == 0)
+                    yield return null;
+            }
+            
+            if (_verticesToCompute.Count == nVerticesToCompute)
+                break;
+        }
+
+        foreach (Vertex it in _verticesToCompute.Keys)
+        {
+            it.Move(impactStrength, radius, _verticesToCompute[it]);
+        }
+        
+        _planetDistord.UpdateMesh();
+
+        Debug.Log("OK");
+    }
+    
 }
