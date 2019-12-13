@@ -120,7 +120,7 @@ public class Planet : MonoBehaviour
 
     public void GeneratePlanet()
     {
-        if (!(terrainMesh && atmosphereMesh))
+        // if (!(terrainMesh && atmosphereMesh))
             Initialize();
 
         GenerateTerrain();
