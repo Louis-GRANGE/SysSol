@@ -8,7 +8,7 @@ public class TerrainFace
     private ShapeGenerator shapeGenerator;
     private Mesh mesh;
     protected int resolution;
-    private Vector3 localUp;
+    public Vector3 localUp;
     private Vector3 axisA;
     private Vector3 axisB;
 
