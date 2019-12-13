@@ -31,7 +31,6 @@ public class PlanetDistord : MonoBehaviour
         DefineAllTrianglesVertices();
 
         StartCoroutine(SetNearbyByVertex());
-
     }
 
     private void DefineAllTrianglesVertices()
@@ -83,7 +82,7 @@ public class PlanetDistord : MonoBehaviour
         _mesh.RecalculateNormals();
         GetComponent<MeshFilter>().mesh = _mesh;
         
-        GetComponentInParent<Planet>().GenerateColours();
+        // GetComponentInParent<Planet>().colourGenerator.UpdateColours();
     }
     
     private IEnumerator SetNearbyByVertex()
