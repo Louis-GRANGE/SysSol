@@ -22,9 +22,10 @@ public class Vertex
     private void Move(Vector3 impactStrength, float radius, float cumulativeDistance)
     {
         _planetDistord.Vertices[PosIndex] += (new Vector3(
-                                                 0,
-                                                 _planetDistord.Normals[PosIndex].y * impactStrength.y,
-                                                 0) * (1 + (cumulativeDistance / radius)));
+                                                  _planetDistord.Normals[PosIndex].x,
+                                                  _planetDistord.Normals[PosIndex].y,
+                                                  _planetDistord.Normals[PosIndex].z
+                                              ) * - Mathf.Sqrt(impactStrength.magnitude * cumulativeDistance) / radius);
     }
 
     private Dictionary<Vertex, float> _verticesToCompute;
@@ -35,8 +36,6 @@ public class Vertex
         Debug.Log("[" + GetType().Name + "] Début de la recharge, rayon: " + radius);
 
         _planetDistord.StartCoroutine(MoveCompute(impactStrength, radius));
-
-        Debug.Log("[" + GetType().Name + "] Terminé: N de vertices à traiter: " + _verticesToCompute.Count);
     }
 
 
@@ -69,6 +68,8 @@ public class Vertex
             if (_verticesToCompute.Count == nVerticesToCompute)
                 break;
         }
+        
+        Debug.Log("[" + GetType().Name + "] Terminé: N de vertices à traiter: " + _verticesToCompute.Count);
 
         foreach (Vertex it in _verticesToCompute.Keys)
         {
@@ -76,8 +77,6 @@ public class Vertex
         }
         
         _planetDistord.UpdateMesh();
-
-        Debug.Log("OK");
     }
     
 }

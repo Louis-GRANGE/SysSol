@@ -15,11 +15,16 @@ public class PlanetDistord : MonoBehaviour
     private Mesh _mesh;
     private Dictionary<int, Vertex> _verticesByIndex;
     private Dictionary<int, Vertex[]> _verticesByTriangle;
+    
+    // public float Radius { get; private set; } 
 
     private void Awake()
     {
         _verticesByIndex = new Dictionary<int, Vertex>();
         _verticesByTriangle = new Dictionary<int, Vertex[]>();
+        // Radius = GetComponentInParent<Planet>().shapeSettings.planetRadius;
+
+        gameObject.layer = LayerMask.NameToLayer("L_Distortable");
         
         HydrateDataFromMesh();
         
@@ -53,7 +58,7 @@ public class PlanetDistord : MonoBehaviour
     public void CrashAsteroid(int indexTriangle, Vector3 impactStrength, float sizeAsteroid)
     {
         Debug.Log("[" + GetType().Name + "] Production de l'impact");
-        
+
         // HydrateDataFromMesh();
 
         foreach (Vertex vertex in _verticesByTriangle[indexTriangle * 3])
@@ -81,6 +86,9 @@ public class PlanetDistord : MonoBehaviour
         _mesh.triangles = Triangles;
         _mesh.RecalculateNormals();
         GetComponent<MeshFilter>().mesh = _mesh;
+        
+        Debug.Log("[" + GetType().Name + "] Mise à jour du maillage");
+        
         
         // GetComponentInParent<Planet>().colourGenerator.UpdateColours();
     }

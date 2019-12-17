@@ -55,7 +55,6 @@ public class Planet : MonoBehaviour
     
     public void Initialize()
     {
-        Debug.Log("Init");
         shapeGenerator.UpdateSettings(shapeSettings);
         colourGenerator.UpdateSettings(colourSettings);
         
@@ -208,6 +207,15 @@ public class Planet : MonoBehaviour
 
         terrainMesh.GetComponent<MeshFilter>().mesh = new Mesh();
         terrainMesh.GetComponent<MeshFilter>().sharedMesh.CombineMeshes(combine);
+        
+
+        if (!terrainMesh.GetComponent<PlanetDistord>())
+        {
+            terrainMesh.AddComponent<PlanetDistord>();
+        }
+        
+        terrainMesh.GetComponent<MeshCollider>().sharedMesh = terrainMesh.GetComponent<MeshFilter>().sharedMesh;
+
         terrainMesh.gameObject.SetActive(true);
     }
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Asteroid : MonoBehaviour
@@ -11,17 +12,19 @@ public class Asteroid : MonoBehaviour
     private Mesh _mesh;
     private Rigidbody _rigidbody;
 
-
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _line = gameObject.AddComponent<LineRenderer>();
+        _position = new List<Vector3>();
     }
 
     private void Start()
     {
-        _line = gameObject.AddComponent<LineRenderer>();
+        gameObject.transform.localScale = Vector3.one * Random.Range(1, 20);
+        _rigidbody.mass = gameObject.transform.localScale.magnitude * Random.Range(1, 10);
+        _rigidbody.velocity = Vector3.one * Random.Range(1, 10);
         CreateLine();
-        _position = new List<Vector3>();
     }
     
     private void Update()
@@ -30,9 +33,9 @@ public class Asteroid : MonoBehaviour
         if (_position.Count > 1)
         {
             _line.positionCount = _position.Count;
-            for (int i = 0; i < _position.Count-1; i++)
+            for (int i = 0; i < _position.Count; i++)
             {
-                if (Vector3.Distance(_position[i], gameObject.transform.position) > 5)
+                if (Vector3.Distance(_position[i], gameObject.transform.position) > (gameObject.transform.localScale.x * 2.5f))
                     _position.Remove(_position[i]);
             }
             CreateLine();
@@ -78,7 +81,12 @@ public class Asteroid : MonoBehaviour
         {
             Debug.DrawRay(hit.transform.position, transform.position, Color.red, 10);
             
-            Vector3 impactStrength = _rigidbody.velocity * _rigidbody.mass;
+            Debug.Log("Masse: " + _rigidbody.mass);
+            Debug.Log("Rayon: " + gameObject.transform.localScale.x);
+            Debug.Log("Velocity: " + _rigidbody.velocity);
+            Debug.Log(("Impact de la folie cosmique: " + (_rigidbody.mass / gameObject.transform.localScale.x) * _rigidbody.velocity));
+
+            Vector3 impactStrength = (_rigidbody.mass / gameObject.transform.localScale.x) * _rigidbody.velocity;
             
             hit.collider.GetComponent<PlanetDistord>().CrashAsteroid(hit.triangleIndex, impactStrength, transform.localScale.x);
         }

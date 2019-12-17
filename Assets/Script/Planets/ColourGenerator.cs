@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ColourGenerator
 {
-    private ColourSettings settings;
+    public ColourSettings settings { get; private set; }
     private Texture2D texture;
     private const int textureResolution = 50;
     private INoiseFilter biomeNoiseFilter;

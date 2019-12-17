@@ -25,7 +25,6 @@ public class TerrainFace
 
     public void ConstructTerrain()
     {
-        Debug.Log("Yeah");
         Vector3[] vertices = new Vector3[resolution * resolution];
         int[] triangles = new int[(resolution - 1) * (resolution - 1) * 6];
         int triIndex = 0;

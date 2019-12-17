@@ -32,8 +32,12 @@ public class Attractor : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
+
+        if (gameObject.GetComponent<LineRenderer>())
+            _lineRenderer = gameObject.GetComponent<LineRenderer>();
+        else
+            _lineRenderer = gameObject.AddComponent<LineRenderer>();
         
-        _lineRenderer = gameObject.AddComponent<LineRenderer>();
         _lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
         _lineRenderer.widthMultiplier = 0.2f;
     }
