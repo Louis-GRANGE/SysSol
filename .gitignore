@@ -35,3 +35,7 @@ sysinfo.txt
 *.apk
 *.unitypackage
 /.idea
+/Assets/Script/Planets/Graphics/Planet Material.mat.meta
+/Assets/Script/Planets/Graphics/Planet Material.mat
+/Assets/Script/Planets/Graphics/Planet Material.mat
+/Assets/Script/Planets/Graphics/Planet Material.mat.meta
