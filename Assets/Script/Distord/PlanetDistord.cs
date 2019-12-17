@@ -80,17 +80,16 @@ public class PlanetDistord : MonoBehaviour
     }
     public void UpdateMesh()
     {
+        Vector2[] uv = _mesh.uv;
         _mesh.Clear();
         _mesh.vertices = Vertices;
         _mesh.normals = Normals;
         _mesh.triangles = Triangles;
         _mesh.RecalculateNormals();
+        _mesh.uv = uv;
         GetComponent<MeshFilter>().mesh = _mesh;
-        
+
         Debug.Log("[" + GetType().Name + "] Mise à jour du maillage");
-        
-        
-        // GetComponentInParent<Planet>().colourGenerator.UpdateColours();
     }
     
     private IEnumerator SetNearbyByVertex()

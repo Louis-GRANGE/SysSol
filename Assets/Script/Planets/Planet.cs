@@ -206,7 +206,7 @@ public class Planet : MonoBehaviour
         }
 
         terrainMesh.GetComponent<MeshFilter>().mesh = new Mesh();
-        terrainMesh.GetComponent<MeshFilter>().sharedMesh.CombineMeshes(combine);
+        terrainMesh.GetComponent<MeshFilter>().sharedMesh.CombineMeshes(combine, true, true, true);
         
 
         if (!terrainMesh.GetComponent<PlanetDistord>())
