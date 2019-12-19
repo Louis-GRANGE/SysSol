@@ -34,19 +34,7 @@ public class InitializePlanet : MonoBehaviour
         
         if (_NomDuSoleil == "") 
             _NomDuSoleil = "Sun";
-        
-        if (_Radius == 0) 
-            _Radius = 1;
-        
-        if (_Impulsion == 0) 
-            _Impulsion = 100;
-        
-        if (_Resolution == 0) 
-            _Resolution = 96;
-        
-        if (_DistWithSun == 0) 
-            _DistWithSun = 100;
-        
+
         _Planete = gameObject;
         
         _Planete.transform.SetParent(GameObject.Find("Map").transform);

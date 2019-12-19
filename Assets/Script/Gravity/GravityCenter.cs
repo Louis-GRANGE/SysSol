@@ -20,4 +20,16 @@ public class GravityCenter : Attractor
 
         rigidbody.mass = mass;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        ListAstre ListeAstreDontDestroyOnLoad = GameObject.Find("DontDestroyOnLoad").GetComponent<ListAstre>();
+        
+        ListeAstreDontDestroyOnLoad.RemoveAstre(other.gameObject);
+        
+        // if (other.transform.parent)
+        //     Destroy(other.transform.parent.gameObject);
+        // else
+        //     Destroy(other.gameObject);
+    }
 }

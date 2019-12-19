@@ -11,6 +11,7 @@ public class Attractor : MonoBehaviour
     [HideInInspector] public Rigidbody rigidbody;
 
     public static List<Attractor> Attractors;
+
     protected List<Vector3> _positions;
 
     public bool drawLine = true;
@@ -50,7 +51,7 @@ public class Attractor : MonoBehaviour
             _lineRenderer.positionCount = _positions.Count;
             for (int i = 0; i < _positions.Count; i++)
             {
-                if (Vector3.Distance(_positions[i], gameObject.transform.position) > (gameObject.transform.localScale.x * 1000f))
+                if (Vector3.Distance(_positions[i], gameObject.transform.position) > (gameObject.transform.localScale.x * 150f))
                     _positions.Remove(_positions[i]);
             }
             
@@ -70,12 +71,18 @@ public class Attractor : MonoBehaviour
     
     private void AddPoint(Vector3 point)
     {
-        _positions.Add(point);
-        if (drawLine && _positions.Count > 1)
+        if (_positions.Count == 0)
+            _positions.Add(point);
+        
+        if (Vector3.Distance(_positions[0], point) > 5)
         {
-            _lineRenderer.positionCount = _positions.Count;
-            _lineRenderer.SetPositions(_positions.ToArray());
-            Debug.DrawLine(_positions[_positions.Count - 2], point, Color.white, 3f);
+            _positions.Add(point);
+            if (drawLine && _positions.Count > 1)
+            {
+                _lineRenderer.positionCount = _positions.Count;
+                _lineRenderer.SetPositions(_positions.ToArray());
+                Debug.DrawLine(_positions[_positions.Count - 2], point, Color.white, 3f);
+            } 
         }
     }
 

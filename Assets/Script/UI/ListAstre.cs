@@ -48,17 +48,6 @@ public class ListAstre : MonoBehaviour
 
         return false;
     }
-    
-    public bool IsGameObjectExist(string name)
-    {
-        foreach (GameObject astre in Astres)
-        {
-            if (astre.name == name)
-                return true;
-        }
-
-        return false;
-    }
 
     private void Awake()
     {
@@ -89,6 +78,7 @@ public class ListAstre : MonoBehaviour
                 GameObject astre = Astres[i];
                 Astres.Remove(Astres[i]);
                 Destroy(astre);
+                Destroy(GameObject.Find(astre.name + "_button"));
                 AstresDonneesList.Remove(AstresDonneesList[i]);
             }
         }
@@ -97,6 +87,19 @@ public class ListAstre : MonoBehaviour
     public void LoadSystemScene()
     {
         SceneManager.LoadScene(_SystemeSceneName);
+    }
+
+    public void RemoveAstre(GameObject astre)
+    {
+        for (int i = 0; i < Astres.Count; i++)
+        {
+            if (Astres[i] == astre)
+            {
+                Astres.RemoveAt(i);
+                AstresDonneesList.RemoveAt(i);
+                Destroy(astre);
+            }
+        }
     }
 
     public void InstancesAstres()

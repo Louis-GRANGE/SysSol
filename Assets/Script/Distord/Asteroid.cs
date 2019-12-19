@@ -63,33 +63,27 @@ public class Asteroid : MonoBehaviour
         _line.startWidth = 0;
         _line.endWidth = gameObject.transform.localScale.x;
     }
-    private void OnCollisionEnter(Collision col)
+    private void OnTriggerEnter(Collider collider)
     {
-        Collider collision = col.collider;
-        
-        Debug.Log("[" + GetType().Name + "] Collision avec " + col.gameObject.name);
+        Debug.Log("[" + GetType().Name + "] Collision avec " + collider.gameObject.name);
         
         Ray ray;
-        if (collision.transform.parent != null)
+        if (collider.transform.parent != null)
         {
-            Vector3 direction = (col.transform.parent.position - transform.position).normalized;
+            Vector3 direction = (collider.transform.parent.position - transform.position).normalized;
             ray = new Ray(transform.position, direction);
         }
         else
         {
-            Vector3 direction = (col.transform.position - transform.position).normalized;
+            Vector3 direction = (collider.transform.position - transform.position).normalized;
             ray = new Ray(transform.position, direction);
         }
 
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("L_Distortable")))
         {
+            Debug.Log(hit.collider.name);
             Debug.DrawRay(hit.transform.position, transform.position, Color.red, 10);
-            
-            // Debug.Log("Masse: " + _rigidbody.mass);
-            // Debug.Log("Rayon: " + gameObject.transform.localScale.x);
-            // Debug.Log("Velocity: " + _rigidbody.velocity);
-            // Debug.Log(("Impact: " + (_rigidbody.mass / gameObject.transform.localScale.x) * _rigidbody.velocity));
 
             Vector3 impactStrength = (_rigidbody.mass / gameObject.transform.localScale.x) * _rigidbody.velocity;
             

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Interaction : MonoBehaviour
@@ -111,6 +112,11 @@ public class Interaction : MonoBehaviour
         
             _ListeOfAstreText.text += _Name + "\n";
         }
+    }
+
+    public void LauchTestImpactScene()
+    {
+        SceneManager.LoadScene("ImpactTest");
     }
 
     void setShape()

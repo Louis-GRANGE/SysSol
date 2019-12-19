@@ -59,7 +59,7 @@ public class PlanetDistord : MonoBehaviour
     
     public void CrashAsteroid(int indexTriangle, Vector3 impactStrength, float sizeAsteroid)
     {
-        Debug.Log("[" + GetType().Name + "] Production de l'impact");
+        Debug.Log("[" + GetType().Name + "] Production de l'impact au triangle d'index " + indexTriangle);
 
         // HydrateDataFromMesh();
 

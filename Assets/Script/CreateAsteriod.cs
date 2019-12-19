@@ -9,18 +9,21 @@ public class CreateAsteriod : MonoBehaviour
     [SerializeField] private GameObject _asteriod;
 
     [SerializeField] private Transform _positionSpawn;
-    // [SerializeField] private GameObject _planet;
-    
+
     private void Update()
     {
-        // if (Input.GetKeyDown(KeyCode.Tab) && Camera.main.gameObject.GetComponent<MouseMovement>().target)
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab) && Camera.main.gameObject.GetComponent<MouseMovement>().target)
         {
             GameObject instanceAsteriod = Instantiate(_asteriod);
-            
-            // instanceAsteriod.transform.SetParent(Camera.main.gameObject.GetComponent<MouseMovement>().target.transform);
+
+            GameObject target = Camera.main.GetComponent<MouseMovement>().target.gameObject;
+
+            // instanceAsteriod.transform.SetParent(target.transform);
             instanceAsteriod.transform.position = _positionSpawn.position;
-            instanceAsteriod.GetComponent<Asteroid>().Fire(Camera.main.transform.forward);
+            instanceAsteriod.transform.LookAt(target.transform);
+            instanceAsteriod.GetComponent<Asteroid>()
+                    .Fire(Camera.main.transform.forward *
+                          target.gameObject.GetComponent<Rigidbody>().velocity.magnitude);
 
             // instanceAsteriod.transform.position = Camera.main.transform.position;
             // instanceAsteriod.GetComponent<Asteroid>().Fire(Camera.main.transform.TransformPoint(Camera.main.transform.forward));
