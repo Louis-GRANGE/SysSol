@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class Planet : MonoBehaviour
 {
-    [Range(2, 256)] 
+    [Range(2, 100)] 
     public int resolution = 10;
     public bool autoUpdate = true;
 
@@ -48,10 +48,12 @@ public class Planet : MonoBehaviour
     private GameObject terrainMeshes;
     private GameObject atmosphereMeshes;
 
-    private void OnValidate()
-    {
-        GeneratePlanet();
-    }
+    private MeshCollider _meshCollider;
+
+    // private void OnValidate()
+    // {
+    //     GeneratePlanet();
+    // }
     
     public void Initialize()
     {
@@ -119,9 +121,7 @@ public class Planet : MonoBehaviour
 
     public void GeneratePlanet()
     {
-        // if (!(terrainMesh && atmosphereMesh))
-            Initialize();
-
+        Initialize();
         GenerateTerrain();
         GenerateAtmosphere();
         GenerateColours();
@@ -213,8 +213,11 @@ public class Planet : MonoBehaviour
         {
             terrainMesh.AddComponent<PlanetDistord>();
         }
-        
-        terrainMesh.GetComponent<MeshCollider>().sharedMesh = terrainMesh.GetComponent<MeshFilter>().sharedMesh;
+
+        _meshCollider = terrainMesh.GetComponent<MeshCollider>();
+
+        _meshCollider.convex = true;
+        _meshCollider.sharedMesh = terrainMesh.GetComponent<MeshFilter>().sharedMesh;
 
         terrainMesh.gameObject.SetActive(true);
     }

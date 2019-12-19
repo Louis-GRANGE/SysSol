@@ -23,7 +23,11 @@ public class Asteroid : MonoBehaviour
     {
         gameObject.transform.localScale = Vector3.one * Random.Range(1, 20);
         _rigidbody.mass = gameObject.transform.localScale.magnitude * Random.Range(1, 10);
-        _rigidbody.velocity = Vector3.one * Random.Range(1, 10);
+    }
+
+    public void Fire(Vector3 direction)
+    {
+        _rigidbody.velocity = direction * Random.Range(1, 10);
         CreateLine();
     }
     

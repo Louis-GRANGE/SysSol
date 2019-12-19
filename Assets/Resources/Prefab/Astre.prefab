@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5010977255712468871
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5010977255712468868}
+  - component: {fileID: -6036330261678892106}
+  - component: {fileID: 5413901737096774653}
+  - component: {fileID: 576688075127833290}
+  - component: {fileID: 7141647589238461649}
+  m_Layer: 0
+  m_Name: Astre
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5010977255712468868
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5010977255712468871}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 100, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &-6036330261678892106
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5010977255712468871}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &5413901737096774653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5010977255712468871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d55beb652736d4326a8893a2036033cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resolution: 10
+  autoUpdate: 1
+  faceRenderMask: 0
+  shapeSettings: {fileID: 0}
+  colourSettings: {fileID: 0}
+  shapeSettingsFoldOut: 0
+  colourSettingsFoldOut: 0
+  terrainFilters: []
+  atmosphereFilters: []
+  terrainMesh: {fileID: 0}
+--- !u!114 &576688075127833290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5010977255712468871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03c54c10903221b4e94fb259eba453fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ShapeSettings: {fileID: 11400000, guid: e4b9f6837433288459cd1982691dfddc, type: 2}
+  _ColourSettings: {fileID: 11400000, guid: 10724b046942def43a30065f8de7c48f, type: 2}
+  _AtmosphereMaterial: {fileID: 2100000, guid: 07b48d484bbce3540ae6fd70dafbdbec, type: 2}
+  _PlaneteMaterial: {fileID: 2100000, guid: e725070d871e4f34ab8d2456ff99474a, type: 2}
+  _Radius: 10
+  _Impulsion: 100
+  _DistWithSun: 100
+  _Resolution: 90
+  _IsOrbit: 1
+  _NomDuSoleil: Sun
+  _InitPlanet: 0
+--- !u!114 &7141647589238461649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5010977255712468871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36b9c14885cd21c4eb4ced713f067b38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 0}
+  drawLine: 1
+  impulsion: 100
+  isOrbit: 0
+  isOrbitCirculaire: 0
+  orbitReference: {fileID: 0}

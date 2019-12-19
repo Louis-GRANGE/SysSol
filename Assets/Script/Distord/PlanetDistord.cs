@@ -27,6 +27,8 @@ public class PlanetDistord : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("L_Distortable");
         
         HydrateDataFromMesh();
+
+        // gameObject.AddComponent<MeshCollider>().convex = true;
         
         for (int i = 0; i < Vertices.Length; i++)
         {
