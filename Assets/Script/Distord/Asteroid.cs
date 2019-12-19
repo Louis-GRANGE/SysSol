@@ -21,8 +21,9 @@ public class Asteroid : MonoBehaviour
 
     private void Start()
     {
-        gameObject.transform.localScale = Vector3.one * Random.Range(1, 20);
+        gameObject.transform.localScale = Vector3.one * Random.Range(1, 10);
         _rigidbody.mass = gameObject.transform.localScale.magnitude * Random.Range(1, 10);
+        Destroy(gameObject, 10);
     }
 
     public void Fire(Vector3 direction)
@@ -85,10 +86,10 @@ public class Asteroid : MonoBehaviour
         {
             Debug.DrawRay(hit.transform.position, transform.position, Color.red, 10);
             
-            Debug.Log("Masse: " + _rigidbody.mass);
-            Debug.Log("Rayon: " + gameObject.transform.localScale.x);
-            Debug.Log("Velocity: " + _rigidbody.velocity);
-            Debug.Log(("Impact de la folie cosmique: " + (_rigidbody.mass / gameObject.transform.localScale.x) * _rigidbody.velocity));
+            // Debug.Log("Masse: " + _rigidbody.mass);
+            // Debug.Log("Rayon: " + gameObject.transform.localScale.x);
+            // Debug.Log("Velocity: " + _rigidbody.velocity);
+            // Debug.Log(("Impact: " + (_rigidbody.mass / gameObject.transform.localScale.x) * _rigidbody.velocity));
 
             Vector3 impactStrength = (_rigidbody.mass / gameObject.transform.localScale.x) * _rigidbody.velocity;
             

@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36b9c14885cd21c4eb4ced713f067b38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 0}
+  rigidbody: {fileID: 0}
   drawLine: 0
   impulsion: 10
   isOrbit: 0

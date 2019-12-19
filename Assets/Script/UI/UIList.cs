@@ -10,19 +10,23 @@ public class UIList : MonoBehaviour
     private List<GameObject> childrens;
     public GameObject Button, Slider;
     public Vector2 pos;
-    private Vector3 offset;
-    public float smoothCam;
+    // private Vector3 offset;
+    // public float smoothCam;
     private string ObjName;
     private GameObject button, slider;
-    private Quaternion DefaultRotation;
+    // private Quaternion DefaultRotation;
+
+    private List<string> _listButtonName;
 
     void Start()
     {
+        _listButtonName = new List<string>();
+        
         ObjName = "Sun";
-        DefaultRotation = Camera.main.transform.rotation;
-        offset = new Vector3(0,200,0);
+        // DefaultRotation = Camera.main.transform.rotation;
+        // offset = new Vector3(0,200,0);
         pos = new Vector2();
-        smoothCam = 2;
+        // smoothCam = 2;
         childrens = new List<GameObject>();
     }
 
@@ -36,18 +40,31 @@ public class UIList : MonoBehaviour
 
     public void findChildrenObject()
     {
+        // ListAstre ListeAstreDontDestroyOnLoad = GameObject.Find("DontDestroyOnLoad").GetComponent<ListAstre>();
+        
         if (GameObject.Find("Map"))
         {
             Map = GameObject.Find("Map");
+            string childName;
+            
             for (int i = 0; i < Map.transform.childCount; i++)
             {
-                childrens.Add(Map.transform.GetChild(i).gameObject);
+                childName = Map.transform.GetChild(i).gameObject.name;
+
+                // if (!ListeAstreDontDestroyOnLoad.IsGameObjectExist(childName))
+                if (!_listButtonName.Contains(childName))
+                {
+                    CreateButton(childName, transform, pos, () => { FonctionButton(childName); });
+                    pos.y -= Button.GetComponent<RectTransform>().rect.size.y * Button.GetComponent<RectTransform>().localScale.y;
+                }
             }
-            foreach (var item in childrens)
-            {
-                CreateButton(item.name, transform, pos, () => { FonctionButton(item.name); });
-                pos.y -= Button.GetComponent<RectTransform>().rect.size.y * Button.GetComponent<RectTransform>().localScale.y;
-            }
+            
+            // foreach (var item in childrens)
+            // {
+            //     CreateButton(item.name, transform, _positions, () => { FonctionButton(item.name); });
+            //     _positions.y -= Button.GetComponent<RectTransform>().rect.size.y * Button.GetComponent<RectTransform>().localScale.y;
+            // }
+            
             CreateSlider(transform, pos);
         }
     }
@@ -60,6 +77,8 @@ public class UIList : MonoBehaviour
         button.GetComponent<RectTransform>().anchoredPosition = position;
         button.GetComponent<Button>().onClick.AddListener(method);
         button.GetComponentInChildren<Text>().text = buttonname;
+        
+        _listButtonName.Add(buttonname);
     }
 
     public void CreateSlider(Transform panel, Vector2 position)//, UnityEvent method
@@ -82,7 +101,7 @@ public class UIList : MonoBehaviour
     }
 
     void FonctionButton(string objname) { ObjName = objname; }
-    void FonctionSlider(float value) { smoothCam = value; }
+    // void FonctionSlider(float value) { smoothCam = value; }
 
     void CameraFollowTo()
     {

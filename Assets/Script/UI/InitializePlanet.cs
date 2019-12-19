@@ -23,34 +23,46 @@ public class InitializePlanet : MonoBehaviour
 
     public void Init()
     {
-        if (!_ShapeSettings) _ShapeSettings = Resources.Load("Script/Shape", typeof(ShapeSettings)) as ShapeSettings;
-        if (!_ColourSettings) _ColourSettings = Resources.Load("Script/Colour") as ColourSettings;
-        if (!_AtmosphereMaterial) _AtmosphereMaterial = Resources.Load("Material/Atmosphere", typeof(Material)) as Material;
-        //if (!_PlaneteMaterial) _PlaneteMaterial = Resources.Load("Material/Planet", typeof(Material)) as Material;
-        if (_NomDuSoleil == "") _NomDuSoleil = "Sun";
-        if (_Radius == 0) _Radius = 1;
-        if (_Impulsion == 0) _Impulsion = 100;
-        if (_Resolution == 0) _Resolution = 96;
-        if (_DistWithSun == 0) _DistWithSun = 100;
-
-
-        _Planete = gameObject;
-
-        //Debug.Log(_Planete);
-        //Debug.Log(GameObject.Find("Map"));
-        //Debug.Log(_Planete.name);
+        if (!_ShapeSettings) 
+            _ShapeSettings = Resources.Load("Script/Shape", typeof(ShapeSettings)) as ShapeSettings;
         
+        if (!_ColourSettings) 
+            _ColourSettings = Resources.Load("Script/Colour") as ColourSettings;
+        
+        if (!_AtmosphereMaterial) 
+            _AtmosphereMaterial = Resources.Load("Material/Atmosphere", typeof(Material)) as Material;
+        
+        if (_NomDuSoleil == "") 
+            _NomDuSoleil = "Sun";
+        
+        if (_Radius == 0) 
+            _Radius = 1;
+        
+        if (_Impulsion == 0) 
+            _Impulsion = 100;
+        
+        if (_Resolution == 0) 
+            _Resolution = 96;
+        
+        if (_DistWithSun == 0) 
+            _DistWithSun = 100;
+        
+        _Planete = gameObject;
         
         _Planete.transform.SetParent(GameObject.Find("Map").transform);
+        
         if (!gameObject.GetComponent<Planet>())
             _Planete.AddComponent<Planet>();
+        
         _Planete.GetComponent<Planet>().shapeSettings = _ShapeSettings;
         _Planete.GetComponent<Planet>().colourSettings = _ColourSettings;
         _Planete.GetComponent<Planet>().resolution = _Resolution;
         _Planete.GetComponent<Planet>().shapeSettings.planetRadius = _Radius;
         _Planete.GetComponent<Planet>().colourSettings.atmosphereMaterial = _AtmosphereMaterial;
-        print("Nom du material: " + _PlaneteMaterial.name);
-        print("Nom du colorsitting: " + _ColourSettings);
+        
+        Debug.Log("[" + GetType().Name + "] Nom du material: " + _PlaneteMaterial.name);
+        Debug.Log("[" + GetType().Name + "] Nom du colorsitting: " + _ColourSettings);
+        
         _Planete.GetComponent<Planet>().colourSettings.planetMaterial = _PlaneteMaterial;
 
         if (!gameObject.GetComponent<Attractor>())
@@ -61,7 +73,7 @@ public class InitializePlanet : MonoBehaviour
         //_Planete.transform.position = Vector3.zero;
         _Planete.transform.position = new Vector3(_DistWithSun, 0, 0);
         _Planete.GetComponent<Planet>().GeneratePlanet();
-        print("IMPULSION DONNEE, + is orbit= " + _IsOrbit);
+        Debug.Log("[" + GetType().Name + "] Impulsion donnée, is orbit= " + _IsOrbit);
         _Planete.GetComponent<Attractor>().StartImpulsion();
     }
 }

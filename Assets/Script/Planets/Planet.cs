@@ -50,11 +50,6 @@ public class Planet : MonoBehaviour
 
     private MeshCollider _meshCollider;
 
-    // private void OnValidate()
-    // {
-    //     GeneratePlanet();
-    // }
-    
     public void Initialize()
     {
         shapeGenerator.UpdateSettings(shapeSettings);

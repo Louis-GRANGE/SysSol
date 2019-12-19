@@ -53,11 +53,7 @@ public class MouseMovement : MonoBehaviour
             Quaternion rotation = toRotation;
 
             distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5, distanceMin, distanceMax);
-            RaycastHit hit;
-            if (Physics.Linecast(target.position, transform.position, out hit))
-            {
-                distance -= hit.distance;
-            }
+
             Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
             Vector3 position = rotation * negDistance + target.position;
 
@@ -71,7 +67,7 @@ public class MouseMovement : MonoBehaviour
     {
         if (angle < -360F)
             angle += 360F;
-        if (angle > 360F)
+        else if (angle > 360F)
             angle -= 360F;
         return Mathf.Clamp(angle, min, max);
     }

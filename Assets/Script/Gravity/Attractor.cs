@@ -8,10 +8,10 @@ public class Attractor : MonoBehaviour
 {
     private const float G = 6.67430f;
     
-    [HideInInspector] public Rigidbody _rigidbody;
+    [HideInInspector] public Rigidbody rigidbody;
 
     public static List<Attractor> Attractors;
-    protected List<Vector3> pos;
+    protected List<Vector3> _positions;
 
     public bool drawLine = true;
 
@@ -22,18 +22,18 @@ public class Attractor : MonoBehaviour
     public Attractor orbitReference;
 
     private LineRenderer _lineRenderer;
-    
-    private void Awake()
+
+    protected void Awake()
     {
         if (Attractors == null)
             Attractors = new List<Attractor>();
 
         Attractors.Add(this);
         
-        pos = new List<Vector3>();
+        _positions = new List<Vector3>();
 
-        _rigidbody = GetComponent<Rigidbody>();
-        _rigidbody.useGravity = false;
+        rigidbody = GetComponent<Rigidbody>();
+        rigidbody.useGravity = false;
 
         if (gameObject.GetComponent<LineRenderer>())
             _lineRenderer = gameObject.GetComponent<LineRenderer>();
@@ -42,13 +42,22 @@ public class Attractor : MonoBehaviour
         _lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
     }
 
-    private void Start()
-    {
-        //StartImpulsion();
-    }
-
     private void FixedUpdate()
     {
+        AddPoint(gameObject.transform.position);
+        if (_lineRenderer.positionCount > 1)
+        {
+            _lineRenderer.positionCount = _positions.Count;
+            for (int i = 0; i < _positions.Count; i++)
+            {
+                if (Vector3.Distance(_positions[i], gameObject.transform.position) > (gameObject.transform.localScale.x * 1000f))
+                    _positions.Remove(_positions[i]);
+            }
+            
+            _lineRenderer.positionCount = _positions.Count;
+            _lineRenderer.SetPositions(_positions.ToArray());
+        }
+        
         // Debug.Log("[" + GetType().Name + "] Attractor object.name: " + gameObject.name);
         foreach (Attractor attractor in Attractors)
         {
@@ -61,16 +70,15 @@ public class Attractor : MonoBehaviour
     
     private void AddPoint(Vector3 point)
     {
-        pos.Add(point);
-        if (drawLine && pos.Count > 1)
+        _positions.Add(point);
+        if (drawLine && _positions.Count > 1)
         {
-            _lineRenderer.positionCount = pos.Count;
-            _lineRenderer.SetPositions(pos.ToArray());
-            Debug.DrawLine(pos[pos.Count - 2], point, Color.white, 3f);
+            _lineRenderer.positionCount = _positions.Count;
+            _lineRenderer.SetPositions(_positions.ToArray());
+            Debug.DrawLine(_positions[_positions.Count - 2], point, Color.white, 3f);
         }
     }
 
-    
     private void OnDestroy()
     {
         Attractors.Remove(this);
@@ -79,9 +87,9 @@ public class Attractor : MonoBehaviour
 
     void Attract(Attractor objToAttract)
     {
-        Rigidbody rbToAttract = objToAttract._rigidbody;
+        Rigidbody rbToAttract = objToAttract.rigidbody;
 
-        Vector3 direction = _rigidbody.position - rbToAttract.position - objToAttract.gameObject.transform.localScale / 2;
+        Vector3 direction = rigidbody.position - rbToAttract.position - objToAttract.gameObject.transform.localScale / 2;
         float distance = direction.magnitude;
 
         float scale = objToAttract.gameObject.transform.localScale.magnitude / 2;
@@ -92,7 +100,7 @@ public class Attractor : MonoBehaviour
             return;
         }
 
-        float forceMagnitude = G * (_rigidbody.mass * rbToAttract.mass) / Mathf.Pow(distance, 2);
+        float forceMagnitude = G * (rigidbody.mass * rbToAttract.mass) / Mathf.Pow(distance, 2);
 
         Vector3 force = direction.normalized * forceMagnitude;
         
@@ -108,30 +116,30 @@ public class Attractor : MonoBehaviour
     {
         if (isOrbit)
         {
-            _rigidbody.mass = 1000;
-            Debug.Log("Orbit mass: " + orbitReference._rigidbody.mass);
+            rigidbody.mass = 1000;
+            Debug.Log("[" + GetType().Name + "] Orbit mass: " + orbitReference.rigidbody.mass);
             //isOrbitCirculaire = true;
             if (orbitReference == null)
                 throw new Exception("[" + GetType().Name + "] You haven't set a reference for orbit");
 
-            float distance = (_rigidbody.position - orbitReference._rigidbody.position - orbitReference.gameObject.transform.localScale / 2).magnitude;
+            float distance = (rigidbody.position - orbitReference.rigidbody.position - orbitReference.gameObject.transform.localScale / 2).magnitude;
 
             if (isOrbitCirculaire)
             {
-                //                float f = Mathf.Sqrt((orbitReference._rigidbody.mass * G * 0.001f) / distance);
-                float f = G * ((_rigidbody.mass * orbitReference._rigidbody.mass) /
-                               Mathf.Pow(Vector3.Distance(_rigidbody.position, orbitReference._rigidbody.position), 2));
+                //                float f = Mathf.Sqrt((orbitReference.rigidbody.mass * G * 0.001f) / distance);
+                float f = G * ((rigidbody.mass * orbitReference.rigidbody.mass) /
+                               Mathf.Pow(Vector3.Distance(rigidbody.position, orbitReference.rigidbody.position), 2));
                 Debug.Log("F = " + f);
 
-                _rigidbody.AddForce(Vector3.forward * 26697 * 10);
+                rigidbody.AddForce(Vector3.forward * 26697 * 10);
             }
             else
             {
-                _rigidbody.mass = GetGravityMass(orbitReference._rigidbody.mass, (_rigidbody.position - orbitReference._rigidbody.position).magnitude);
+                rigidbody.mass = GetGravityMass(orbitReference.rigidbody.mass, (rigidbody.position - orbitReference.rigidbody.position).magnitude);
 
-                _rigidbody.AddForce(Vector3.forward * impulsion);
+                rigidbody.AddForce(Vector3.forward * impulsion);
                 Debug.Log("[" + GetType().Name + "] Impulsion faite avec: (Vector3.forward * impulsion)");
-                //                _rigidbody.AddForce(Vector3.forward * distance);
+                //                rigidbody.AddForce(Vector3.forward * distance);
             }
         }
     }
