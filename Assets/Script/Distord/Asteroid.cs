@@ -70,11 +70,13 @@ public class Asteroid : MonoBehaviour
         Ray ray;
         if (collider.transform.parent != null)
         {
+            Debug.Log("[" + GetType().Name + "] Parent: " + collider.gameObject.transform.parent.name);
             Vector3 direction = (collider.transform.parent.position - transform.position).normalized;
             ray = new Ray(transform.position, direction);
         }
         else
         {
+            Debug.Log("[" + GetType().Name + "] Pas de parent");
             Vector3 direction = (collider.transform.position - transform.position).normalized;
             ray = new Ray(transform.position, direction);
         }
